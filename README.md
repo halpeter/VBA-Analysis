@@ -2,7 +2,6 @@
 
 Here is my VBA code with comments for this assingment:
 
-
 Sub StockMarket()
     'loop through all sheets
     For Each ws In Worksheets
@@ -30,16 +29,6 @@ Sub StockMarket()
     current_row = 0
     Dim percent_change As Double
     percent_change = 0
-    'Define variables for bonus
-    Dim greatest_percent_increase As Double
-    greatest_percent_increase = 0
-    Dim greatest_percent_decrease As Double
-    greatest_percent_decrease = 0
-    Dim greatest_total_volume As Double
-    greatest_total_volume = 0
-    Dim greatest_percent_increase_ticker As String
-    Dim greatest_percent_decrease_ticker As String
-    Dim greatest_total_volume_ticker As String
     
       'loop through rows to find total volume
     For i = 2 To LastRow
@@ -61,8 +50,13 @@ Sub StockMarket()
             year_close = ws.Cells(i, 6).Value
             'calculate the difference between year open and year close
             year_change = year_open - year_close
+            
             'calculate the percent change
-            percent_change = year_change / year_open
+            If year_open = 0 Then
+                percent_change = year_close
+            Else
+                percent_change = year_change / year_open
+            End If
             
             'print values in table
             ws.Range("I" & Summary_Table_Row).Value = ticker
@@ -80,57 +74,29 @@ Sub StockMarket()
             'count the number of ticker rows in each ticker
             ticker_rows = ticker_rows + 1
         End If
-        
+    
+    Next i
+    
+    'Find last row of summary table
+    SummaryTableLastRow = ws.Cells(Rows.Count, 10).End(xlUp).Row
         'Conditional Formating year change
-        If Cells(i, 10).Value > 0 Then
+    For i = 2 To SummaryTableLastRow
+        If ws.Cells(i, 10).Value > 0 Then
             ws.Cells(i, 10).Interior.ColorIndex = 4
         Else
             ws.Cells(i, 10).Interior.ColorIndex = 3
         End If
-            
-        'Bonus Greatest % Increase
-        If ws.Cells(i, 11).Value > greatest_percent_increase Then
-            greatest_percent_increase = ws.Cells(i, 11).Value
-            greatest_percent_increase_ticker = ws.Cells(i, 1).Value
-        End If
-        'Bonus Greatest % Decrease
-        If ws.Cells(i, 11).Value < greatest_percent_decrease Then
-            greatest_percent_decrease = ws.Cells(i, 11).Value
-            greatest_percent_decrease_ticker = ws.Cells(i, 1).Value
-        End If
-        'Bonus Greatest Total Volume
-        If ws.Cells(i, 12).Value > greatest_total_volume Then
-            greatest_total_volume = ws.Cells(i, 12).Value
-            greatest_total_volume_ticker = ws.Cells(i, 1).Value
-        End If
-    
     Next i
-    
-    'Input bonus values into table
-    ws.Cells(2, 15).Value = greatest_percent_increase_ticker
-    ws.Cells(2, 16).Value = greatest_percent_increase
-    ws.Cells(3, 15).Value = greatest_percent_decrease_ticker
-    ws.Cells(3, 16).Value = greatest_percent_decrease
-    ws.Cells(4, 15).Value = greatest_total_volume_ticker
-    ws.Cells(4, 16).Value = greatest_total_volume
     
     'add headers to each worksheet for summary table
     ws.Cells(1, 9).Value = "Ticker"
     ws.Cells(1, 10).Value = "Yearly Change"
     ws.Cells(1, 11).Value = "Percent Change"
     ws.Cells(1, 12).Value = "Total Stock Volume"
-    ws.Cells(2, 14).Value = "Greatest % Increase"
-    ws.Cells(3, 14).Value = "Greatest % Decrease"
-    ws.Cells(4, 14).Value = "Greatest Total Volume"
-    ws.Cells(1, 15).Value = "Ticker"
-    ws.Cells(1, 16).Value = "Value"
     'autfit data
     ws.Columns("I:P").AutoFit
     'format percent change as a percent
-    For i = 2 To LastRow
-        ws.Cells(i, 11).NumberFormat = "0.00%"
-    Next i
-    ws.Range("P2:P3").NumberFormat = "0.00%"
+    ws.Columns("K").NumberFormat = "0.00%"
     
     Next ws
 
