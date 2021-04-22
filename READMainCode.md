@@ -1,4 +1,4 @@
-# VBA-challenge
+# VBA-Analysis
 
 Here is my VBA code with comments for this assingment:
 
